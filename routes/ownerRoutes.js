@@ -24,4 +24,24 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+// ✅ DELETE - Delete Owner by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const owner = await Owner.findByIdAndDelete(req.params.id);
+
+    if (!owner) {
+      return res.status(404).json({ message: "Owner not found" });
+    }
+
+    res.json({
+      message: "Owner deleted successfully",
+      id: req.params.id
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = router;

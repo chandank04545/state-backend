@@ -9,20 +9,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Health check (IMPORTANT for Render)
+app.get("/", (req, res) => {
+  res.send("API is running 🚀");
+});
+
 // Routes
-const ownerRoutes = require("./routes/ownerRoutes");
-const customerRoutes = require("./routes/customerRoutes");
+app.use("/api/owners", require("./routes/ownerRoutes"));
+app.use("/api/customers", require("./routes/customerRoutes"));
 
-app.use("/api/owners", ownerRoutes);
-app.use("/api/customers", customerRoutes);
-
-// MongoDB Connection
+// MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
-
-// Start Server
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
-});
+  .then(() => {
+    console.log("MongoDB Connected");
+    const PORT = process.env.PORT || 8000;
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT}`)
+    );
+  })
+  .catch(err => {
+    console.error("Mongo connection error:", err);
+  });
