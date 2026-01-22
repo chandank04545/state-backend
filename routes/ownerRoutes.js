@@ -43,5 +43,25 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// UPDATE - Edit Customer
+router.put("/:id", async (req, res) => {
+  try {
+    const updatedOwner = await Owner.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedOwner) {
+      return res.status(404).json({ message: "Owner not found" });
+    }
+
+    res.json(updatedOwner);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 
 module.exports = router;
